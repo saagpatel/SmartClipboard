@@ -1,140 +1,64 @@
 # SmartClipboard
 
-SmartClipboard is a macOS menu bar clipboard manager built with Tauri + React.
-It captures text and images, stores history locally, supports fast search, and
-adds privacy-aware filtering for sensitive content.
+[![Rust](https://img.shields.io/badge/Rust-dea584?style=flat-square&logo=rust)](#) [![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?style=flat-square&logo=typescript)](#) [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](#)
 
-Current app version: `0.1.0`
+> Every URL, snippet, error message, and command you copy is one keystroke away — categorized, searchable, and private.
 
-## Highlights
+SmartClipboard is a macOS menu bar app built with Tauri + React. It monitors the system clipboard continuously, stores history locally in SQLite with FTS5 full-text search, automatically categorizes items (URL, email, code, command, error, IP, path), filters out sensitive content like passwords and tokens, and surfaces everything via a global shortcut (`Cmd+Shift+V`).
 
-- System-wide clipboard monitoring (text + image)
-- Local SQLite storage with FTS5 search
-- Smart categorization: URL, email, error, code, command, IP, path, misc
-- Sensitive-content detection with auto-exclusion controls
-- SHA256-based deduplication
-- Favorites, app-level exclusions, retention cleanup, max-item limit
-- Menu bar UX with global shortcut (`CmdOrCtrl+Shift+V`)
-- Item detail view with image preview and syntax-highlighted code blocks
+## Features
 
-## Security and Reliability
-
-- Tauri CSP is explicitly configured (not `null`) in:
-  - `src-tauri/tauri.conf.json`
-- Filesystem image reads are path-bounded and DB-authorized.
-- Clipboard image persistence uses validated PNG encoding.
-- Regression tests cover backend image/DB behavior and frontend list navigation.
-- CI runs frontend build/test/audit plus Rust audit/build/test.
-
-## Requirements
-
-- macOS 13+
-- Node.js 20+
-- Rust stable toolchain
+- **Persistent clipboard history** — text and images captured automatically and stored locally
+- **FTS5 full-text search** — instant search across all clipboard history
+- **Smart categorization** — automatically tags items as URL, email, error, code, command, IP address, file path, or misc
+- **Sensitive-content detection** — detects and excludes passwords, tokens, and secrets with configurable auto-exclusion rules
+- **SHA256 deduplication** — identical items are deduplicated rather than stored twice
+- **App-level exclusions** — block specific apps from being captured (e.g., password managers)
+- **Image support** — captures images with preview and validated PNG storage
+- **Favorites** — pin frequently used items for instant access
+- **Retention controls** — configurable history size and auto-cleanup
+- **Global shortcut** — `Cmd+Shift+V` opens the manager from any app
 
 ## Quick Start
 
+### Prerequisites
+
+- macOS 13+
+- Node.js 20+
+- Rust stable toolchain (`rustup`)
+- Tauri system dependencies: [tauri.app/start/prerequisites](https://tauri.app/start/prerequisites/)
+
+### Installation
+
 ```bash
+git clone https://github.com/saagpatel/SmartClipboard
+cd SmartClipboard
 npm install
-npm run tauri dev
 ```
 
-## Lean Dev Mode (Low Disk)
+### Usage
 
 ```bash
+# Start in development mode
+npm run tauri dev
+
+# Lean dev mode (lower disk usage)
 npm run dev:lean
 ```
 
-This still runs the normal Tauri development flow (`npm run tauri dev`) but uses
-ephemeral cache/build locations for:
+## Tech Stack
 
-- Rust target output (`CARGO_TARGET_DIR`)
-- Vite dev cache (`VITE_CACHE_DIR`)
+| Layer | Technology |
+|-------|------------|
+| Desktop shell | Tauri 2 |
+| Frontend | React, TypeScript, Tailwind CSS |
+| Backend | Rust — clipboard monitoring, categorization, image handling |
+| Storage | SQLite with FTS5 (local app data dir) |
+| Security | SHA256 deduplication, CSP enforced, path-bounded image reads |
 
-When the process exits, temporary lean-mode artifacts are removed automatically.
+## Architecture
 
-Tradeoff:
-
-- Lower persistent disk usage between runs
-- Slower startup/compile on each fresh lean run vs reusing `src-tauri/target`
-
-## Build
-
-```bash
-npm run tauri build
-```
-
-## Maintenance
-
-```bash
-# Remove only heavy build artifacts (keeps dependencies)
-npm run clean:heavy
-
-# Remove all reproducible local caches/artifacts (includes node_modules)
-npm run clean:full
-```
-
-After running `npm run clean:full`, reinstall dependencies before development:
-
-```bash
-npm install
-```
-
-## Common Commands
-
-| Command | Purpose |
-| --- | --- |
-| `npm install` | Install frontend dependencies |
-| `npm run tauri dev` | Run the app in development mode |
-| `npm run dev:lean` | Run development mode with ephemeral build caches |
-| `npm run tauri build` | Build a production app bundle |
-| `npm run test -- --run` | Run frontend tests once |
-| `npm run build` | Build frontend production assets |
-| `npm run audit` | Run npm + Rust dependency audits |
-| `npm run clean:heavy` | Remove heavy build artifacts only |
-| `npm run clean:full` | Remove all reproducible local caches/artifacts |
-| `npm run clean` | Alias for `npm run clean:full` |
-
-## Quality Gates
-
-```bash
-# Frontend tests
-npm run test -- --run
-
-# Frontend production build
-npm run build
-
-# Full dependency audits
-npm run audit
-
-# Rust checks
-cargo test --manifest-path src-tauri/Cargo.toml
-cargo build --manifest-path src-tauri/Cargo.toml
-```
-
-## Keyboard Shortcuts
-
-- `CmdOrCtrl+Shift+V` toggle window
-- `/` or `Cmd+F` focus search
-- `↑` / `↓` navigate list
-- `Enter` copy selected item
-- `Cmd+Click` or double-click open detail view
-- `Escape` hide window
-
-## Project Structure
-
-- `src/` React UI and IPC client
-- `src-tauri/src/` Rust backend, clipboard monitor, handlers, DB layer
-- `src-tauri/migrations/` SQLite schema migrations
-- `.github/workflows/ci.yml` CI quality gates
-- `.cargo/audit.toml` Rust advisory policy configuration
-
-## Notes on Rust Audit Policy
-
-`cargo audit` is enforced via `npm run audit:rust` and CI.
-The reviewed ignore list in `.cargo/audit.toml` is for transitive, mostly
-cross-platform dependencies from Tauri/wry and should be re-evaluated on every
-Tauri or wry upgrade.
+Clipboard monitoring runs in a Rust background loop. All content passes through a categorization pipeline before write — the sensitive-content detector runs first and can block the write entirely. Images are validated as PNG before storage and reads are path-bounded and database-authorized. The frontend uses the global shortcut plugin to open the manager window without requiring a dock icon.
 
 ## License
 
