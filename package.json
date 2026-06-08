@@ -17,7 +17,6 @@
     "audit:rust": "cargo audit --file src-tauri/Cargo.lock",
     "audit": "npm run audit:npm && npm run audit:rust",
     "prepare": "husky",
-    "commit": "cz",
     "commitlint": "commitlint",
     "git:guard:branch": "bash scripts/git/guard-branch.sh",
     "git:guard:no-main-push": "bash scripts/git/guard-no-main-push.sh",
@@ -45,30 +44,22 @@
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.0.0",
+    "@tailwindcss/vite": "^4.3.0",
     "@tauri-apps/cli": "^2",
     "@testing-library/react": "^16.0.0",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
-    "@vitejs/plugin-react": "^4.6.0",
-    "jsdom": "^28.1.0",
-    "tailwindcss": "^4.0.0",
+    "@vitejs/plugin-react": "^6.0.2",
+    "jsdom": "^29.1.1",
+    "tailwindcss": "^4.3.0",
     "typescript": "~5.8.3",
-    "vite": "^7.0.4",
-    "vitest": "^3.0.0",
+    "vite": "^8.0.16",
+    "vitest": "^4.1.8",
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
-    "@commitlint/cz-commitlint": "^19.8.1",
-    "@lhci/cli": "^0.15.1",
-    "commitizen": "^4.3.1",
     "husky": "^9.1.7",
     "lint-staged": "^15.5.2",
     "prettier": "^3.6.2"
-  },
-  "config": {
-    "commitizen": {
-      "path": "@commitlint/cz-commitlint"
-    }
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,mjs,cjs,json,md,css,scss,yml,yaml}": [
