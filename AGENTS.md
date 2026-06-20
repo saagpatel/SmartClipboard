@@ -2,13 +2,13 @@
 
 ## Communication Contract
 
-- Inherit global Codex communication and reporting rules from `/Users/d/.codex/AGENTS.override.md` and `/Users/d/.codex/policies/communication/BigPictureReportingV1.md`.
+- Inherit global Codex communication and reporting rules from `~/AGENTS.override.md` and global policy files.
 - Repo-specific instructions below add project constraints only; do not restate global voice or status-reporting rules here.
 <!-- comm-contract:end -->
 
 ## Inherited Operating Rules
 
-- Inherit global git, review/fix, testing, docs, skill-use, and reporting gates from `/Users/d/.codex/AGENTS.md` and active session instructions.
+- Inherit global git, review/fix, testing, docs, skill-use, and reporting gates from the global `AGENTS.md` and active session instructions.
 - Use `.codex/verify.commands` and `.codex/scripts/run_verify_commands.sh` as this repo-local verification authority when present.
 - Keep the project-specific portfolio constraints below as the source of truth for runtime, privacy, and release risks.
 
@@ -38,10 +38,10 @@ The repo is active desktop productivity work. Existing local changes are PR-temp
 
 ```bash
 # Start in development mode
-npm run tauri dev
+pnpm tauri dev
 
 # Lean dev mode (lower disk usage)
-npm run dev:lean
+pnpm run dev:lean
 ```
 
 ## Known Risks
