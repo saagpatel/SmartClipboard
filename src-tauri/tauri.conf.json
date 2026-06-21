@@ -1,51 +1,51 @@
 {
-  "$schema": "https://schema.tauri.app/config/2",
-  "productName": "SmartClipboard",
-  "version": "0.1.0",
-  "identifier": "com.smartclipboard.desktop",
-  "build": {
-    "beforeDevCommand": "npm run dev",
-    "devUrl": "http://localhost:1420",
-    "beforeBuildCommand": "npm run build",
-    "frontendDist": "../dist"
-  },
-  "app": {
-    "windows": [
-      {
-        "label": "main",
-        "title": "SmartClipboard",
-        "width": 400,
-        "height": 550,
-        "decorations": false,
-        "alwaysOnTop": true,
-        "visible": false,
-        "skipTaskbar": true,
-        "resizable": false,
-        "transparent": true
-      }
-    ],
-    "security": {
-      "csp": "default-src 'self'; connect-src ipc: http://ipc.localhost https://ipc.localhost; img-src 'self' asset: data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; script-src 'self'"
-    },
-    "trayIcon": {
-      "id": "main-tray",
-      "iconPath": "icons/icon.png",
-      "iconAsTemplate": true,
-      "tooltip": "SmartClipboard"
-    }
-  },
-  "bundle": {
-    "active": true,
-    "targets": "all",
-    "icon": [
-      "icons/32x32.png",
-      "icons/128x128.png",
-      "icons/128x128@2x.png",
-      "icons/icon.icns",
-      "icons/icon.ico"
-    ],
-    "macOS": {
-      "minimumSystemVersion": "13.0"
-    }
-  }
+	"$schema": "https://schema.tauri.app/config/2",
+	"productName": "SmartClipboard",
+	"version": "0.1.0",
+	"identifier": "com.smartclipboard.desktop",
+	"build": {
+		"beforeDevCommand": "pnpm run dev",
+		"devUrl": "http://localhost:1420",
+		"beforeBuildCommand": "pnpm run build",
+		"frontendDist": "../dist"
+	},
+	"app": {
+		"windows": [
+			{
+				"label": "main",
+				"title": "SmartClipboard",
+				"width": 400,
+				"height": 550,
+				"decorations": false,
+				"alwaysOnTop": true,
+				"visible": false,
+				"skipTaskbar": true,
+				"resizable": false,
+				"transparent": true
+			}
+		],
+		"security": {
+			"csp": "default-src 'self'; connect-src ipc: http://ipc.localhost https://ipc.localhost; img-src 'self' asset: data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; script-src 'self'"
+		},
+		"trayIcon": {
+			"id": "main-tray",
+			"iconPath": "icons/icon.png",
+			"iconAsTemplate": true,
+			"tooltip": "SmartClipboard"
+		}
+	},
+	"bundle": {
+		"active": true,
+		"targets": "all",
+		"icon": [
+			"icons/32x32.png",
+			"icons/128x128.png",
+			"icons/128x128@2x.png",
+			"icons/icon.icns",
+			"icons/icon.ico"
+		],
+		"macOS": {
+			"minimumSystemVersion": "13.0"
+		}
+	}
 }

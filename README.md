@@ -1,6 +1,6 @@
 # SmartClipboard
 
-[![Rust](https://img.shields.io/badge/Rust-dea584?style=flat-square&logo=rust)](#) [![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?style=flat-square&logo=typescript)](#) [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](#)
+[![Rust](https://img.shields.io/badge/Rust-dea584?style=flat-square&logo=rust)](https://www.rust-lang.org) [![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?style=flat-square&logo=typescript)](https://www.typescriptlang.org) [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](./LICENSE) [![CI](https://github.com/saagpatel/SmartClipboard/actions/workflows/ci.yml/badge.svg)](https://github.com/saagpatel/SmartClipboard/actions/workflows/ci.yml)
 
 > Every URL, snippet, error message, and command you copy is one keystroke away — categorized, searchable, and private.
 
@@ -33,17 +33,17 @@ SmartClipboard is a macOS menu bar app built with Tauri + React. It monitors the
 ```bash
 git clone https://github.com/saagpatel/SmartClipboard
 cd SmartClipboard
-npm install
+pnpm install
 ```
 
 ### Usage
 
 ```bash
 # Start in development mode
-npm run tauri dev
+pnpm tauri dev
 
 # Lean dev mode (lower disk usage)
-npm run dev:lean
+pnpm run dev:lean
 ```
 
 ## Tech Stack

@@ -34,3 +34,7 @@ src-tauri/gen
 
 # Codex local audit workspace
 .codex_audit/
+
+# Internal portfolio / codex tooling
+.codex/
+docs/PORTFOLIO-DISPOSITION.md
