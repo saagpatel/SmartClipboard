@@ -49,7 +49,11 @@ jobs:
         run: cargo install cargo-audit --locked
 
       - name: Cargo audit
-        run: cargo audit --file src-tauri/Cargo.lock
+        run: |
+          # quick-xml >=0.41 is not yet reachable through the current Tauri/plist dependency chain.
+          cargo audit --file src-tauri/Cargo.lock \
+            --ignore RUSTSEC-2026-0194 \
+            --ignore RUSTSEC-2026-0195
 
   rust-build-test:
     name: Rust Build and Test (macOS)
