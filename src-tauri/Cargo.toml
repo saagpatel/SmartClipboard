@@ -1,0 +1,40 @@
+[package]
+name = "smartclipboard"
+version = "0.1.0"
+description = "macOS clipboard history manager with search and smart categorization"
+authors = ["SmartClipboard Team"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "smartclipboard_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["tray-icon"] }
+tauri-plugin-global-shortcut = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+rusqlite = { version = "0.32", features = ["bundled"] }
+arboard = "3"
+sha2 = "0.10"
+hex = "0.4"
+thiserror = "2"
+chrono = "0.4"
+regex = "1"
+tokio = { version = "1", features = ["sync", "time"] }
+log = "0.4"
+env_logger = "0.11"
+image = { version = "0.25", default-features = false, features = ["png"] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2 = "0.6"
+objc2-app-kit = { version = "0.3", features = ["NSWorkspace", "NSRunningApplication"] }
+objc2-foundation = { version = "0.3", features = ["NSString"] }
+
+[dev-dependencies]
+tempfile = "3"
