@@ -66,5 +66,8 @@
 		"*.{js,jsx,ts,tsx,mjs,cjs,json,md,css,scss,yml,yaml}": [
 			"prettier --write"
 		]
+	},
+	"overrides": {
+		"undici": "7.28.0"
 	}
 }
