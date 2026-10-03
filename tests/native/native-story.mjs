@@ -33,12 +33,29 @@ const app = spawn(binary, [], {
 let session;
 const sleep = (ms) => new Promise((done) => setTimeout(done, ms));
 async function request(method, path, body) {
-  const response = await fetch(`http://127.0.0.1:4445${path}`, {
-    method,
-    headers: { "Content-Type": "application/json" },
-    ...(body === undefined ? {} : { body: JSON.stringify(body) }),
-    signal: AbortSignal.timeout(15000),
-  });
+  let response;
+  try {
+    response = await fetch(`http://127.0.0.1:4445${path}`, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+      signal: AbortSignal.timeout(15000),
+    });
+  } catch (error) {
+    appendFileSync(
+      `${output}/webdriver.jsonl`,
+      JSON.stringify({
+        method,
+        path,
+        body,
+        transportError: String(error),
+        cause: String(error.cause),
+        exitCode: app.exitCode,
+        signalCode: app.signalCode,
+      }) + "\n",
+    );
+    throw error;
+  }
   const json = await response.json();
   const logged = path.endsWith("/screenshot")
     ? { screenshotLength: json.value?.length }
@@ -79,9 +96,12 @@ try {
       "native app exited before WebDriver was ready",
     );
     try {
-      await request("GET", "/status");
-      ready = true;
-      break;
+      const status = await request("GET", "/status");
+      if (status.ready) {
+        ready = true;
+        break;
+      }
+      await sleep(500);
     } catch {
       await sleep(500);
     }
@@ -201,7 +221,13 @@ try {
   writeFileSync(
     `${output}/failure.json`,
     JSON.stringify(
-      { head: fixture.head, error: String(error), stack: error.stack },
+      {
+        head: fixture.head,
+        error: String(error),
+        stack: error.stack,
+        exitCode: app.exitCode,
+        signalCode: app.signalCode,
+      },
       null,
       2,
     ) + "\n",

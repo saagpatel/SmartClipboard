@@ -84,7 +84,7 @@ pub fn run() {
 
             // Start background cleanup task (hourly)
             let db_clone = db.clone();
-            tokio::spawn(async move {
+            tauri::async_runtime::spawn(async move {
                 let mut interval = tokio::time::interval(std::time::Duration::from_secs(3600));
                 loop {
                     interval.tick().await;
