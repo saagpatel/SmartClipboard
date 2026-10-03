@@ -4,6 +4,7 @@
 
 - Inherit global Codex communication and reporting rules from `~/AGENTS.override.md` and global policy files.
 - Repo-specific instructions below add project constraints only; do not restate global voice or status-reporting rules here.
+
 <!-- comm-contract:end -->
 
 ## Inherited Operating Rules
@@ -36,13 +37,10 @@ The repo is active desktop productivity work. Existing local changes are PR-temp
 
 ## How To Run
 
-```bash
-# Start in development mode
-pnpm tauri dev
-
-# Lean dev mode (lower disk usage)
-pnpm run dev:lean
-```
+Use [README setup and usage](README.md#quick-start) for prerequisites and manual
+launch safety, and [README verification](README.md#verification) for focused
+fixture checks and broader test/build commands. Development launches monitor the
+live clipboard; lean mode isolates caches only.
 
 ## Known Risks
 
