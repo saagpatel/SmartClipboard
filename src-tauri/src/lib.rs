@@ -16,11 +16,18 @@ use std::sync::Arc;
 use tauri::Manager;
 use tauri_plugin_global_shortcut::GlobalShortcutExt;
 
+#[cfg(all(feature = "native-acceptance", not(debug_assertions)))]
+compile_error!("native-acceptance is restricted to explicit debug test builds");
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     env_logger::init();
 
-    tauri::Builder::default()
+    let builder = tauri::Builder::default();
+    #[cfg(feature = "native-acceptance")]
+    let builder = builder.plugin(tauri_plugin_wdio_webdriver::init());
+
+    builder
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .setup(|app| {
             use tauri_plugin_global_shortcut::ShortcutState;

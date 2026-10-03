@@ -108,6 +108,21 @@ history. A browser-only `pnpm dev` serves the frontend but has no Tauri IPC brid
 so it cannot verify capture, copying, persistence, or shortcuts. Pure documentation
 changes do not require a desktop or browser launch.
 
+The `Native Keyboard and Copy (macOS)` CI job exercises this acceptance flow in
+the separate `runner` account on a fresh standard GitHub-hosted macOS VM. Before
+launch, it verifies the account/home and absence of production and test app data,
+establishes a synthetic clipboard, and seeds the real SQLite migration. Basic
+embedded WebDriver actions navigate the rendered ordered history and Enter uses
+the existing Rust copy handler; host `pbpaste` must match the distinct selected
+payload. Artifacts preserve the head/tree, runner identity, screenshots and native
+clipboard result. This proves only the runner's recorded macOS/WKWebView version.
+
+The driver is an optional, default-off `native-acceptance` Cargo feature restricted
+to debug builds. Its capability and visible window belong only to the test config;
+the shipping dependency graph and capabilities exclude it. The preparation and
+story scripts reject local accounts. Do not run the native app or these clipboard
+scripts on your normal macOS account.
+
 ## Tech Stack
 
 | Layer         | Technology                                                           |
