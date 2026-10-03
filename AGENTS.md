@@ -46,7 +46,7 @@ live clipboard; lean mode isolates caches only.
 
 - Clipboard data is sensitive; preserve local-only storage and app exclusion controls.
 - Sensitive-content detection should run before writes and be tested before expanding capture behavior.
-- Image-preview reads must remain path-bounded and database-authorized; image copying reads the stored database path directly.
+- Image reads must remain path-bounded and database-authorized. Preview reads enforce this; image copying currently reads the stored database path directly, a known implementation gap.
 - Keep PR-template and lockfile drift separate from clipboard monitoring changes.
 
 ## Next Recommended Move
