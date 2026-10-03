@@ -24,7 +24,7 @@ SmartClipboard is a macOS menu bar app built with Tauri + React. It monitors the
 ### Prerequisites
 
 - macOS 13+
-- Node.js 22.22.1 or newer 22.x, or Node.js 24+ (see the locked tooling engines)
+- Node.js 22.22.2 or newer 22.x, Node.js 24.15.0 or newer 24.x, or Node.js 26+ (see the locked tooling engines)
 - pnpm 10.28.1, matching `package.json`'s `packageManager`
 - Rust stable toolchain (`rustup`)
 - Tauri system dependencies: [tauri.app/start/prerequisites](https://tauri.app/start/prerequisites/)
@@ -110,12 +110,12 @@ changes do not require a desktop or browser launch.
 
 ## Tech Stack
 
-| Layer         | Technology                                                   |
-| ------------- | ------------------------------------------------------------ |
-| Desktop shell | Tauri 2                                                      |
-| Frontend      | React, TypeScript, Tailwind CSS                              |
-| Backend       | Rust — clipboard monitoring, categorization, image handling  |
-| Storage       | SQLite with FTS5 (local app data dir)                        |
+| Layer         | Technology                                                           |
+| ------------- | -------------------------------------------------------------------- |
+| Desktop shell | Tauri 2                                                              |
+| Frontend      | React, TypeScript, Tailwind CSS                                      |
+| Backend       | Rust — clipboard monitoring, categorization, image handling          |
+| Storage       | SQLite with FTS5 (local app data dir)                                |
 | Security      | SHA256 deduplication, CSP enforced, path-bounded image-preview reads |
 
 ## Architecture
