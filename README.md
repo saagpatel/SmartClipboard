@@ -4,14 +4,14 @@
 
 > Every URL, snippet, error message, and command you copy is one keystroke away — categorized, searchable, and private.
 
-SmartClipboard is a macOS menu bar app built with Tauri + React. It monitors the system clipboard continuously, stores history locally in SQLite with FTS5 full-text search, automatically categorizes items (URL, email, code, command, error, IP, path), filters out sensitive content like passwords and tokens, and surfaces everything via a global shortcut (`Cmd+Shift+V`).
+SmartClipboard is a macOS menu bar app built with Tauri + React. It monitors the system clipboard continuously, stores history metadata and text locally in SQLite with FTS5 full-text search and images as local PNG files, automatically categorizes text items (URL, email, code, command, error, IP, path), filters out text matching credit-card, SSN, and phone-number patterns by default, and surfaces history via a global shortcut (`Cmd+Shift+V`).
 
 ## Features
 
 - **Persistent clipboard history** — text and images captured automatically and stored locally
-- **FTS5 full-text search** — instant search across all clipboard history
-- **Smart categorization** — automatically tags items as URL, email, error, code, command, IP address, file path, or misc
-- **Sensitive-content detection** — detects and excludes passwords, tokens, and secrets with configurable auto-exclusion rules
+- **FTS5 full-text search** — searches non-sensitive items' text, image dimension labels, categories, and source apps
+- **Smart categorization** — automatically tags text items as URL, email, error, code, command, IP address, file path, or misc; images are tagged misc
+- **Sensitive-content detection** — detects credit-card, SSN, and phone-number patterns in text with a configurable auto-exclusion toggle
 - **SHA256 deduplication** — identical items are deduplicated rather than stored twice
 - **App-level exclusions** — block specific apps from being captured (e.g., password managers)
 - **Image support** — captures images with preview and validated PNG storage
@@ -116,11 +116,11 @@ changes do not require a desktop or browser launch.
 | Frontend      | React, TypeScript, Tailwind CSS                              |
 | Backend       | Rust — clipboard monitoring, categorization, image handling  |
 | Storage       | SQLite with FTS5 (local app data dir)                        |
-| Security      | SHA256 deduplication, CSP enforced, path-bounded image reads |
+| Security      | SHA256 deduplication, CSP enforced, path-bounded image-preview reads |
 
 ## Architecture
 
-Clipboard monitoring runs in a Rust background loop. All content passes through a categorization pipeline before write — the sensitive-content detector runs first and can block the write entirely. Images are validated as PNG before storage and reads are path-bounded and database-authorized. The frontend uses the global shortcut plugin to open the manager window without requiring a dock icon.
+Clipboard monitoring runs in a Rust background loop. Text passes through a categorization pipeline before write — the sensitive-content detector runs first and can block the text write entirely. Images are encoded as PNG before storage, bypass text sensitivity checks, and are tagged misc. Image-preview reads are path-bounded and database-authorized; image copying reads the stored database path directly. The Rust backend registers the fixed global shortcut to toggle the manager window, which is configured with `skipTaskbar: true`.
 
 ## License
 

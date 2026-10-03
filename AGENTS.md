@@ -19,11 +19,11 @@
 
 ## What This Project Is
 
-SmartClipboard is a macOS menu-bar clipboard manager built with Tauri and React. It monitors clipboard history locally, stores searchable text/image items in SQLite with FTS5, categorizes entries, filters sensitive content, deduplicates by hash, and exposes a global shortcut manager.
+SmartClipboard is a macOS menu-bar clipboard manager built with Tauri and React. It monitors clipboard history locally, stores searchable text/image metadata in SQLite with FTS5 and image files locally, categorizes text entries, filters sensitive text, deduplicates by hash, and exposes the manager through a fixed global shortcut.
 
 ## Current State
 
-The repo is active desktop productivity work. Existing local changes are PR-template metadata plus an untracked lockfile, so context recovery should remain documentation-only.
+The repo is active desktop productivity work. The npm, pnpm, and Cargo lockfiles are tracked, and `.github/` tracks both `PULL_REQUEST_TEMPLATE.md` and `pull_request_template.md` (case variants); context recovery should remain documentation-only.
 
 ## Stack
 
@@ -33,7 +33,7 @@ The repo is active desktop productivity work. Existing local changes are PR-temp
 | Frontend      | React, TypeScript, Tailwind CSS                              |
 | Backend       | Rust — clipboard monitoring, categorization, image handling  |
 | Storage       | SQLite with FTS5 (local app data dir)                        |
-| Security      | SHA256 deduplication, CSP enforced, path-bounded image reads |
+| Security      | SHA256 deduplication, CSP enforced, path-bounded image-preview reads |
 
 ## How To Run
 
@@ -46,11 +46,11 @@ live clipboard; lean mode isolates caches only.
 
 - Clipboard data is sensitive; preserve local-only storage and app exclusion controls.
 - Sensitive-content detection should run before writes and be tested before expanding capture behavior.
-- Image reads must remain path-bounded and database-authorized.
+- Image reads must remain path-bounded and database-authorized. Preview reads enforce this; image copying currently reads the stored database path directly, a known implementation gap.
 - Keep PR-template and lockfile drift separate from clipboard monitoring changes.
 
 ## Next Recommended Move
 
-Resolve PR-template and lockfile drift separately, then verify capture, sensitive filtering, search, image handling, favorites, retention, and global shortcut behavior before shipping changes.
+Resolve PR-template drift separately, then verify capture, sensitive filtering, search, image handling, favorites, retention, and global shortcut behavior before shipping changes.
 
 <!-- portfolio-context:end -->
