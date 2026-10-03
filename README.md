@@ -24,7 +24,7 @@ SmartClipboard is a macOS menu bar app built with Tauri + React. It monitors the
 ### Prerequisites
 
 - macOS 13+
-- Node.js 22.22.1 or newer 22.x, or Node.js 24+ (see the locked tooling engines)
+- Node.js 22.22.2 or newer 22.x, Node.js 24.15.0 or newer 24.x, or Node.js 26+ (see the locked tooling engines)
 - pnpm 10.28.1, matching `package.json`'s `packageManager`
 - Rust stable toolchain (`rustup`)
 - Tauri system dependencies: [tauri.app/start/prerequisites](https://tauri.app/start/prerequisites/)
@@ -108,14 +108,29 @@ history. A browser-only `pnpm dev` serves the frontend but has no Tauri IPC brid
 so it cannot verify capture, copying, persistence, or shortcuts. Pure documentation
 changes do not require a desktop or browser launch.
 
+The `Native Keyboard and Copy (macOS)` CI job exercises this acceptance flow in
+the separate `runner` account on a fresh standard GitHub-hosted macOS VM. Before
+launch, it verifies the account/home and absence of production and test app data,
+establishes a synthetic clipboard, and seeds the real SQLite migration. Basic
+embedded WebDriver actions navigate the rendered ordered history and Enter uses
+the existing Rust copy handler; host `pbpaste` must match the distinct selected
+payload. Artifacts preserve the head/tree, runner identity, screenshots and native
+clipboard result. This proves only the runner's recorded macOS/WKWebView version.
+
+The driver is an optional, default-off `native-acceptance` Cargo feature restricted
+to debug builds. Its capability and visible window belong only to the test config;
+the shipping dependency graph and capabilities exclude it. The preparation and
+story scripts reject local accounts. Do not run the native app or these clipboard
+scripts on your normal macOS account.
+
 ## Tech Stack
 
-| Layer         | Technology                                                   |
-| ------------- | ------------------------------------------------------------ |
-| Desktop shell | Tauri 2                                                      |
-| Frontend      | React, TypeScript, Tailwind CSS                              |
-| Backend       | Rust — clipboard monitoring, categorization, image handling  |
-| Storage       | SQLite with FTS5 (local app data dir)                        |
+| Layer         | Technology                                                           |
+| ------------- | -------------------------------------------------------------------- |
+| Desktop shell | Tauri 2                                                              |
+| Frontend      | React, TypeScript, Tailwind CSS                                      |
+| Backend       | Rust — clipboard monitoring, categorization, image handling          |
+| Storage       | SQLite with FTS5 (local app data dir)                                |
 | Security      | SHA256 deduplication, CSP enforced, path-bounded image-preview reads |
 
 ## Architecture

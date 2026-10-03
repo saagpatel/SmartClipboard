@@ -1,6 +1,13 @@
 /* @vitest-environment jsdom */
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import type { ClipboardItem } from "../types";
 import { HistoryList } from "./HistoryList";
 
@@ -32,7 +39,9 @@ vi.mock("./SearchBar", () => ({
     onClear: () => void;
   }) => (
     <div>
-      <button onClick={() => onSearch("query", { category: "code" })}>trigger-search</button>
+      <button onClick={() => onSearch("query", { category: "code" })}>
+        trigger-search
+      </button>
       <button onClick={onClear}>trigger-clear</button>
     </div>
   ),
@@ -48,9 +57,15 @@ vi.mock("./HistoryItem", () => ({
     isSelected: boolean;
     onToggleFavorite: (id: number, isFavorite: boolean) => void;
   }) => (
-    <div data-testid={`item-${item.id}`} data-selected={isSelected ? "true" : "false"}>
+    <div
+      data-testid={`item-${item.id}`}
+      data-selected={isSelected ? "true" : "false"}
+    >
       <span>{item.preview}</span>
-      <button data-testid={`fav-${item.id}`} onClick={() => onToggleFavorite(item.id, item.isFavorite)}>
+      <button
+        data-testid={`fav-${item.id}`}
+        onClick={() => onToggleFavorite(item.id, item.isFavorite)}
+      >
         favorite
       </button>
     </div>
@@ -106,13 +121,21 @@ describe("HistoryList", () => {
     fireEvent.click(screen.getByText("trigger-search"));
 
     await waitFor(() => {
-      expect(mockSearch).toHaveBeenCalledWith("query", { category: "code" }, 100);
+      expect(mockSearch).toHaveBeenCalledWith(
+        "query",
+        { category: "code" },
+        100,
+      );
     });
 
     fireEvent.click(screen.getByTestId("fav-1"));
 
     await waitFor(() => {
-      expect(mockSearch).toHaveBeenLastCalledWith("query", { category: "code" }, 100);
+      expect(mockSearch).toHaveBeenLastCalledWith(
+        "query",
+        { category: "code" },
+        100,
+      );
     });
   });
 
@@ -130,11 +153,42 @@ describe("HistoryList", () => {
     fireEvent.click(screen.getByText("trigger-search"));
     await waitFor(() => expect(screen.getByTestId("item-2")).toBeTruthy());
 
-    fireEvent.keyDown(window, { key: "ArrowDown" });
-    fireEvent.keyDown(window, { key: "Enter" });
+    act(() => {
+      fireEvent.keyDown(window, { key: "ArrowDown" });
+      fireEvent.keyDown(window, { key: "Enter" });
+    });
 
     await waitFor(() => {
       expect(mockCopyToClipboard).toHaveBeenCalledWith(2);
     });
+  });
+  it("clamps rapid navigation and copies the latest selection before rendering", async () => {
+    mockGetHistory.mockResolvedValue([
+      makeItem(1, "first"),
+      makeItem(2, "second"),
+      makeItem(3, "third"),
+    ]);
+    render(<HistoryList />);
+    await waitFor(() => expect(screen.getByTestId("item-3")).toBeTruthy());
+
+    act(() => {
+      fireEvent.keyDown(window, { key: "ArrowDown" });
+      fireEvent.keyDown(window, { key: "ArrowDown" });
+      fireEvent.keyDown(window, { key: "ArrowDown" });
+      fireEvent.keyDown(window, { key: "Enter" });
+    });
+    await waitFor(() =>
+      expect(mockCopyToClipboard).toHaveBeenLastCalledWith(3),
+    );
+
+    act(() => {
+      fireEvent.keyDown(window, { key: "ArrowUp" });
+      fireEvent.keyDown(window, { key: "ArrowUp" });
+      fireEvent.keyDown(window, { key: "ArrowUp" });
+      fireEvent.keyDown(window, { key: "Enter" });
+    });
+    await waitFor(() =>
+      expect(mockCopyToClipboard).toHaveBeenLastCalledWith(1),
+    );
   });
 });

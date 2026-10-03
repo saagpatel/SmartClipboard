@@ -1,6 +1,18 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import type { ClipboardItem, SearchFilters } from "../types";
-import { getHistory, search, copyToClipboard, setFavorite, deleteItem } from "../lib/ipc";
+import {
+  getHistory,
+  search,
+  copyToClipboard,
+  setFavorite,
+  deleteItem,
+} from "../lib/ipc";
 import { HistoryItem as HistoryItemComponent } from "./HistoryItem";
 import { EmptyState } from "./EmptyState";
 import { SearchBar } from "./SearchBar";
@@ -22,13 +34,11 @@ export function HistoryList() {
   const searchQueryRef = useRef("");
   const searchFiltersRef = useRef<SearchFilters>({});
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     itemsRef.current = items;
+    selectedIndexRef.current = 0;
+    setSelectedIndex(0);
   }, [items]);
-
-  useEffect(() => {
-    selectedIndexRef.current = selectedIndex;
-  }, [selectedIndex]);
 
   useEffect(() => {
     isSearchingRef.current = isSearching;
@@ -63,17 +73,20 @@ export function HistoryList() {
     }
   }, []);
 
-  const handleSearch = useCallback(async (query: string, filters: SearchFilters) => {
-    setIsSearching(true);
-    setSearchQuery(query);
-    setSearchFilters(filters);
-    try {
-      const results = await search(query, filters, 100);
-      setItems(results);
-    } catch (error) {
-      console.error("Failed to search:", error);
-    }
-  }, []);
+  const handleSearch = useCallback(
+    async (query: string, filters: SearchFilters) => {
+      setIsSearching(true);
+      setSearchQuery(query);
+      setSearchFilters(filters);
+      try {
+        const results = await search(query, filters, 100);
+        setItems(results);
+      } catch (error) {
+        console.error("Failed to search:", error);
+      }
+    },
+    [],
+  );
 
   const refreshCurrentView = useCallback(async () => {
     if (isSearchingRef.current && searchQueryRef.current) {
@@ -96,11 +109,6 @@ export function HistoryList() {
   }, [isSearching, loadHistory]);
 
   useEffect(() => {
-    // Reset selection when items change
-    setSelectedIndex(0);
-  }, [items]);
-
-  useEffect(() => {
     // Keyboard navigation
     const handleKeyDown = async (e: KeyboardEvent) => {
       // Don't interfere with input typing
@@ -113,12 +121,17 @@ export function HistoryList() {
 
       if (e.key === "ArrowDown") {
         e.preventDefault();
-        setSelectedIndex((prev) =>
-          Math.min(prev + 1, Math.max(itemsRef.current.length - 1, 0))
+        const nextIndex = Math.min(
+          selectedIndexRef.current + 1,
+          Math.max(itemsRef.current.length - 1, 0),
         );
+        selectedIndexRef.current = nextIndex;
+        setSelectedIndex(nextIndex);
       } else if (e.key === "ArrowUp") {
         e.preventDefault();
-        setSelectedIndex((prev) => Math.max(prev - 1, 0));
+        const nextIndex = Math.max(selectedIndexRef.current - 1, 0);
+        selectedIndexRef.current = nextIndex;
+        setSelectedIndex(nextIndex);
       } else if (e.key === "Enter") {
         e.preventDefault();
         const currentItems = itemsRef.current;
@@ -133,7 +146,9 @@ export function HistoryList() {
       } else if (e.key === "/" || (e.metaKey && e.key === "f")) {
         e.preventDefault();
         // Focus search input
-        const searchInput = document.querySelector('input[type="text"]') as HTMLInputElement;
+        const searchInput = document.querySelector(
+          'input[type="text"]',
+        ) as HTMLInputElement;
         searchInput?.focus();
       }
     };
@@ -196,7 +211,9 @@ export function HistoryList() {
         <div className="flex-1 flex items-center justify-center">
           {isSearching ? (
             <div className="text-center px-8">
-              <p className="text-lg mb-2 text-[var(--text-primary)]">No results found</p>
+              <p className="text-lg mb-2 text-[var(--text-primary)]">
+                No results found
+              </p>
               <p className="text-sm text-[var(--text-secondary)]">
                 Try a different search term or clear filters
               </p>

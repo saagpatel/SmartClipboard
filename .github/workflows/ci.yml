@@ -20,7 +20,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version: 26
           cache: pnpm
 
       - name: Install dependencies
@@ -70,3 +70,61 @@ jobs:
 
       - name: Rust build
         run: cargo build --manifest-path src-tauri/Cargo.toml
+
+  native-keyboard-copy:
+    name: Native Keyboard and Copy (macOS)
+    runs-on: macos-latest
+    timeout-minutes: 35
+    permissions:
+      contents: read
+    env:
+      ACCEPTANCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          cache: pnpm
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Restore locked frontend
+        run: pnpm install --frozen-lockfile
+
+      - name: Prove shipping dependency graph excludes test listener
+        shell: bash
+        run: |
+          mkdir -p native-acceptance-artifacts
+          cargo tree --manifest-path src-tauri/Cargo.toml --locked --no-default-features --prefix none > native-acceptance-artifacts/shipping-graph.txt
+          python3 - <<'PY'
+          import pathlib
+          graph = pathlib.Path('native-acceptance-artifacts/shipping-graph.txt').read_text()
+          assert 'tauri-plugin-wdio-webdriver' not in graph
+          capabilities = pathlib.Path('src-tauri/capabilities/default.json').read_text()
+          assert 'wdio' not in capabilities
+          PY
+
+      - name: Build explicit debug test application with real production handlers
+        run: pnpm tauri build --debug --no-bundle --features native-acceptance --config tests/native/tauri.native-test.conf.json
+
+      - name: Establish isolated account, empty app data and synthetic-only history
+        run: python3 tests/native/prepare.py
+
+      - name: WebDriver navigation and real Rust copy to host clipboard
+        run: node tests/native/native-story.mjs
+
+      - name: Preserve native source, runner, screenshots and clipboard proof
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: native-keyboard-copy-${{ github.run_id }}-${{ github.run_attempt }}
+          path: native-acceptance-artifacts/

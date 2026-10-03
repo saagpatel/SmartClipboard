@@ -1,73 +1,81 @@
 {
-	"name": "smartclipboard",
-	"private": true,
-	"version": "0.1.0",
-	"type": "module",
-	"packageManager": "pnpm@10.28.1",
-	"scripts": {
-		"dev": "vite",
-		"dev:lean": "node scripts/lean-dev.mjs",
-		"clean": "node scripts/clean.mjs full",
-		"clean:heavy": "node scripts/clean.mjs heavy",
-		"clean:full": "node scripts/clean.mjs full",
-		"build": "tsc && vite build",
-		"preview": "vite preview",
-		"tauri": "tauri",
-		"test": "vitest",
-		"audit:npm": "npm audit --json",
-		"audit:rust": "cargo audit --file src-tauri/Cargo.lock",
-		"audit": "npm run audit:npm && npm run audit:rust",
-		"prepare": "husky",
-		"commitlint": "commitlint",
-		"git:guard:branch": "bash scripts/git/guard-branch.sh",
-		"git:guard:no-main-push": "bash scripts/git/guard-no-main-push.sh",
-		"git:guard:atomic": "bash scripts/git/guard-atomic.sh",
-		"git:guard:generated": "bash scripts/git/guard-generated.sh",
-		"git:guard:large-files": "bash scripts/git/guard-large-files.sh",
-		"git:guard:secrets": "bash scripts/git/guard-secrets.sh",
-		"git:guard:all": "pnpm git:guard:branch && pnpm git:guard:atomic && pnpm git:guard:generated && pnpm git:guard:large-files && pnpm git:guard:secrets",
-		"git:commit:propose": "node scripts/git/propose-commit-message.mjs",
-		"git:session:save": "bash scripts/git/session-save.sh",
-		"git:session:resume": "bash scripts/git/session-resume.sh",
-		"pr:notes": "bash scripts/git/generate-pr-notes.sh",
-		"perf:bundle": "node scripts/perf/bundle-report.mjs",
-		"perf:build": "node scripts/perf/measure-build-time.mjs",
-		"perf:assets": "bash scripts/perf/check-assets.sh",
-		"perf:memory": "node --expose-gc scripts/perf/memory-smoke.mjs",
-		"perf:summary": "node scripts/perf/summarize.mjs",
-		"lint-staged": "lint-staged"
-	},
-	"dependencies": {
-		"@tauri-apps/api": "^2",
-		"@tauri-apps/plugin-global-shortcut": "^2.3.2",
-		"highlight.js": "^11.11.1",
-		"react": "^19.2.7",
-		"react-dom": "^19.2.7"
-	},
-	"devDependencies": {
-		"@tailwindcss/vite": "^4.3.2",
-		"@tauri-apps/cli": "^2",
-		"@testing-library/react": "^16.0.0",
-		"@types/react": "^19.2.17",
-		"@types/react-dom": "^19.1.6",
-		"@vitejs/plugin-react": "^6.0.3",
-		"jsdom": "^29.1.1",
-		"tailwindcss": "^4.3.2",
-		"typescript": "~7.0.2",
-		"vite": "^8.1.3",
-		"vitest": "^4.1.10",
-		"@commitlint/cli": "^21.2.0",
-		"@commitlint/config-conventional": "^21.2.0",
-		"husky": "^9.1.7",
-		"lint-staged": "^17.0.8",
-		"prettier": "^3.9.4"
-	},
-	"lint-staged": {
-		"*.{js,jsx,ts,tsx,mjs,cjs,json,md,css,scss,yml,yaml}": [
-			"prettier --write"
-		]
-	},
-	"overrides": {
-		"undici": "7.28.0"
-	}
+  "name": "smartclipboard",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "packageManager": "pnpm@10.28.1",
+  "scripts": {
+    "dev": "vite",
+    "dev:lean": "node scripts/lean-dev.mjs",
+    "clean": "node scripts/clean.mjs full",
+    "clean:heavy": "node scripts/clean.mjs heavy",
+    "clean:full": "node scripts/clean.mjs full",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "test": "vitest",
+    "audit:npm": "npm audit --json",
+    "audit:rust": "cargo audit --file src-tauri/Cargo.lock",
+    "audit": "npm run audit:npm && npm run audit:rust",
+    "prepare": "husky",
+    "commitlint": "commitlint",
+    "git:guard:branch": "bash scripts/git/guard-branch.sh",
+    "git:guard:no-main-push": "bash scripts/git/guard-no-main-push.sh",
+    "git:guard:atomic": "bash scripts/git/guard-atomic.sh",
+    "git:guard:generated": "bash scripts/git/guard-generated.sh",
+    "git:guard:large-files": "bash scripts/git/guard-large-files.sh",
+    "git:guard:secrets": "bash scripts/git/guard-secrets.sh",
+    "git:guard:all": "pnpm git:guard:branch && pnpm git:guard:atomic && pnpm git:guard:generated && pnpm git:guard:large-files && pnpm git:guard:secrets",
+    "git:commit:propose": "node scripts/git/propose-commit-message.mjs",
+    "git:session:save": "bash scripts/git/session-save.sh",
+    "git:session:resume": "bash scripts/git/session-resume.sh",
+    "pr:notes": "bash scripts/git/generate-pr-notes.sh",
+    "perf:bundle": "node scripts/perf/bundle-report.mjs",
+    "perf:build": "node scripts/perf/measure-build-time.mjs",
+    "perf:assets": "bash scripts/perf/check-assets.sh",
+    "perf:memory": "node --expose-gc scripts/perf/memory-smoke.mjs",
+    "perf:summary": "node scripts/perf/summarize.mjs",
+    "lint-staged": "lint-staged"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-global-shortcut": "^2.3.2",
+    "highlight.js": "^11.12.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@tauri-apps/cli": "^2",
+    "@testing-library/react": "^16.3.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "jsdom": "30.0.1",
+    "tailwindcss": "^4.3.3",
+    "typescript": "~7.0.2",
+    "vite": "^8.3.1",
+    "vitest": "^5.0.3",
+    "@commitlint/cli": "^21.2.3",
+    "@commitlint/config-conventional": "^21.2.3",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.5.1",
+    "prettier": "^3.9.9"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,mjs,cjs,json,md,css,scss,yml,yaml}": [
+      "prettier --write"
+    ]
+  },
+  "overrides": {
+    "undici": "8.10.2"
+  },
+  "engines": {
+    "node": "^22.22.2 || ^24.15.0 || >=26"
+  },
+  "pnpm": {
+    "overrides": {
+      "undici": "8.10.2"
+    }
+  }
 }

@@ -27,12 +27,12 @@ The repo is active desktop productivity work. The npm, pnpm, and Cargo lockfiles
 
 ## Stack
 
-| Layer         | Technology                                                   |
-| ------------- | ------------------------------------------------------------ |
-| Desktop shell | Tauri 2                                                      |
-| Frontend      | React, TypeScript, Tailwind CSS                              |
-| Backend       | Rust — clipboard monitoring, categorization, image handling  |
-| Storage       | SQLite with FTS5 (local app data dir)                        |
+| Layer         | Technology                                                           |
+| ------------- | -------------------------------------------------------------------- |
+| Desktop shell | Tauri 2                                                              |
+| Frontend      | React, TypeScript, Tailwind CSS                                      |
+| Backend       | Rust — clipboard monitoring, categorization, image handling          |
+| Storage       | SQLite with FTS5 (local app data dir)                                |
 | Security      | SHA256 deduplication, CSP enforced, path-bounded image-preview reads |
 
 ## How To Run
