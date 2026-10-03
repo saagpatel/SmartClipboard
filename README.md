@@ -24,7 +24,8 @@ SmartClipboard is a macOS menu bar app built with Tauri + React. It monitors the
 ### Prerequisites
 
 - macOS 13+
-- Node.js 20+
+- Node.js 22.22.1 or newer 22.x, or Node.js 24+ (see the locked tooling engines)
+- pnpm 10.28.1, matching `package.json`'s `packageManager`
 - Rust stable toolchain (`rustup`)
 - Tauri system dependencies: [tauri.app/start/prerequisites](https://tauri.app/start/prerequisites/)
 
@@ -33,10 +34,21 @@ SmartClipboard is a macOS menu bar app built with Tauri + React. It monitors the
 ```bash
 git clone https://github.com/saagpatel/SmartClipboard
 cd SmartClipboard
-pnpm install
+pnpm install --frozen-lockfile
 ```
 
+The Git tree currently tracks both `.github/PULL_REQUEST_TEMPLATE.md` and
+`.github/pull_request_template.md` with different contents. On a case-insensitive
+filesystem they share one file and can appear modified immediately after checkout.
+Use a case-sensitive checkout when you need a clean full working tree; preserve
+this checkout artifact rather than staging it as part of unrelated work.
+
 ### Usage
+
+Both commands below launch the desktop app, start reading the system clipboard,
+and use the normal app-data database, including startup retention cleanup. Use a
+separate macOS test account with synthetic clipboard content for manual testing.
+Lean mode isolates build caches only; it does not isolate clipboard history.
 
 ```bash
 # Start in development mode
@@ -46,15 +58,65 @@ pnpm tauri dev
 pnpm run dev:lean
 ```
 
+## Verification
+
+Run commands from the repository root. For fixture verification in an isolated
+checkout, `pnpm install --frozen-lockfile --ignore-scripts` installs the locked
+packages without running the Husky `prepare` hook. A normal developer install
+runs that hook and configures Git hooks in the checkout.
+
+```bash
+# Focused frontend regression: mocked Tauri IPC/window and synthetic items
+pnpm exec vitest run src/components/HistoryList.test.tsx
+
+# Broader frontend tests, typecheck, and production assets (does not launch Tauri)
+pnpm exec vitest run
+pnpm exec tsc --noEmit
+pnpm run build
+
+# Format-check the files you changed; there is no standalone JS lint script
+pnpm exec prettier --check README.md
+```
+
+Rust verification needs the Rust toolchain and Tauri native prerequisites above
+(including Xcode Command Line Tools on macOS). The library tests use synthetic
+strings/images and temporary databases; they do not call the app's `run()` or
+start clipboard monitoring.
+
+```bash
+# Focused sensitive-content tests, then the broader library suite
+cargo test --locked --manifest-path src-tauri/Cargo.toml --lib sensitive::tests
+cargo test --locked --manifest-path src-tauri/Cargo.toml --lib
+
+# Compile without launching the app; Rust formatting check
+cargo build --locked --manifest-path src-tauri/Cargo.toml
+cargo fmt --manifest-path src-tauri/Cargo.toml -- --check
+```
+
+For dependency changes, `pnpm run audit:npm` runs `npm audit --json` against
+`package-lock.json`, while pnpm installation uses `pnpm-lock.yaml`; inspect both
+lockfiles when diagnosing different results. `pnpm run audit:rust` additionally
+requires `cargo-audit`. Audits access advisory registries. [CI](.github/workflows/ci.yml)
+currently ignores two named Rust advisories, so its audit result can differ from
+the local script; a passing audit does not establish that ignored findings are
+fixed. Keep failed audits visible rather than running automatic dependency fixes
+as part of verification.
+
+For changed UI behavior, run the mocked component tests above and inspect the
+changed flow in the Tauri webview only in the separate test account with synthetic
+history. A browser-only `pnpm dev` serves the frontend but has no Tauri IPC bridge,
+so it cannot verify capture, copying, persistence, or shortcuts. Pure documentation
+changes do not require a desktop or browser launch.
+
 ## Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| Desktop shell | Tauri 2 |
-| Frontend | React, TypeScript, Tailwind CSS |
-| Backend | Rust — clipboard monitoring, categorization, image handling |
-| Storage | SQLite with FTS5 (local app data dir) |
-| Security | SHA256 deduplication, CSP enforced, path-bounded image reads |
+| Layer         | Technology                                                   |
+| ------------- | ------------------------------------------------------------ |
+| Desktop shell | Tauri 2                                                      |
+| Frontend      | React, TypeScript, Tailwind CSS                              |
+| Backend       | Rust — clipboard monitoring, categorization, image handling  |
+| Storage       | SQLite with FTS5 (local app data dir)                        |
+| Security      | SHA256 deduplication, CSP enforced, path-bounded image reads |
 
 ## Architecture
 
