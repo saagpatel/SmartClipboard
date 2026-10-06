@@ -68,14 +68,16 @@
     ]
   },
   "overrides": {
-    "undici": "8.10.2"
+    "undici": "8.10.2",
+    "source-map-js": "^1.2.2"
   },
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26"
   },
   "pnpm": {
     "overrides": {
-      "undici": "8.10.2"
+      "undici": "8.10.2",
+      "source-map-js": "^1.2.2"
     }
   }
 }
